@@ -1,4 +1,5 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/na0iqlm9j0vt3ps3?svg=true)](https://ci.appveyor.com/project/nwestfall/xamarin-anrwatchdog)
+[![NuGet version](https://badge.fury.io/nu/Xamarin.ANRWatchDog.svg)](https://badge.fury.io/nu/Xamarin.ANRWatchDog)
 
 # Xamarin.ANRWatchDog
 Xamarin port of [https://github.com/SalomonBrys/ANR-WatchDog](https://github.com/SalomonBrys/ANR-WatchDog)
@@ -17,8 +18,7 @@ Table of contents
     * [How it works](#how-it-works)
   * [Usage](#usage)
     * [Install](#install)
-      * [With Gradle / Android Studio](#with-gradle--android-studio)
-      * [With Eclipse](#with-eclipse)
+      * [Nuget](#nuget)
     * [Reading the ANRError exception report](#reading-the-anrerror-exception-report)
     * [Configuration](#configuration)
       * [Timeout (minimum hanging time for an ANR)](#timeout-minimum-hanging-time-for-an-anr)
@@ -78,6 +78,9 @@ Install
 -------
 
 ### Nuget
+```
+Install-Package Xamarin.ANRWatchDog
+```
 
 
 Reading the ANRError exception report
