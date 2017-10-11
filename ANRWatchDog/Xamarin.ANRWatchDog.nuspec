@@ -3,12 +3,12 @@
   <metadata>
     <id>$id$</id>
     <version>$version$</version>
-    <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
+    <title>Xamarin.ANRWatchDog</title>
+    <authors>Nathan Westfall</authors>
+    <owners>Nathan Westfall</owners>
     <projectUrl>https://github.com/nwestfall/Xamarin.ANRWatchDog</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
+    <description>A simple watchdog that detects Android ANRs (Application Not Responding).  Ported from https://github.com/SalomonBrys/ANR-WatchDog</description>
     <releaseNotes>First release</releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>Xamarin Android ANR Watchdog</tags>
