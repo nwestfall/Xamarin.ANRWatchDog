@@ -1,4 +1,5 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/na0iqlm9j0vt3ps3?svg=true)](https://ci.appveyor.com/project/nwestfall/xamarin-anrwatchdog)
+[![NuGet version](https://badge.fury.io/nu/Xamarin.ANRWatchDog.svg)](https://badge.fury.io/nu/Xamarin.ANRWatchDog)
 
 # Xamarin.ANRWatchDog
 Xamarin port of [https://github.com/SalomonBrys/ANR-WatchDog](https://github.com/SalomonBrys/ANR-WatchDog)
