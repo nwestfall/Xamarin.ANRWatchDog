@@ -15,7 +15,6 @@ namespace Xamarin.ANRWatchDog
     /// of the exception.  Each "Caused by" is the stack trace of the running thread.  Note that the main
     /// thread always comes first.
     /// </summary>
-    [SuppressWarnings(Value = new string[] { "Convert2Diamond", "UnusedDeclaration" })]
     public class ANRError : Error
     {
         [Serializable]

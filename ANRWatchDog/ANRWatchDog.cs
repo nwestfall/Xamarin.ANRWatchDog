@@ -8,7 +8,6 @@ namespace Xamarin.ANRWatchDog
     /// <summary>
     /// A watchdog timer thread that detects when the UI thread has frozen
     /// </summary>
-    [SuppressWarnings(Value = new string[] { "UnusedDeclaration" })]
     public class ANRWatchDog : Thread, IRunnable
     {
         public interface IANRListener
