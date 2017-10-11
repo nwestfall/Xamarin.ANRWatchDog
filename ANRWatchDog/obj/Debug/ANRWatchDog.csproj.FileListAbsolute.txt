@@ -1,0 +1,11 @@
+c:\users\nathan.westfall\documents\visual studio 2017\Projects\ANRWatchDog\ANRWatchDog\bin\Debug\ANRWatchDog.dll
+c:\users\nathan.westfall\documents\visual studio 2017\Projects\ANRWatchDog\ANRWatchDog\bin\Debug\ANRWatchDog.pdb
+c:\users\nathan.westfall\documents\visual studio 2017\Projects\ANRWatchDog\ANRWatchDog\bin\Debug\ANRWatchDog.ANRWatchDog.apk
+c:\users\nathan.westfall\documents\visual studio 2017\Projects\ANRWatchDog\ANRWatchDog\bin\Debug\ANRWatchDog.ANRWatchDog-Signed.apk
+c:\users\nathan.westfall\documents\visual studio 2017\Projects\ANRWatchDog\ANRWatchDog\obj\Debug\ANRWatchDog.csprojResolveAssemblyReference.cache
+c:\users\nathan.westfall\documents\visual studio 2017\Projects\ANRWatchDog\ANRWatchDog\obj\Debug\ANRWatchDog.csproj.CoreCompileInputs.cache
+c:\users\nathan.westfall\documents\visual studio 2017\Projects\ANRWatchDog\ANRWatchDog\obj\Debug\ANRWatchDog.dll
+c:\users\nathan.westfall\documents\visual studio 2017\Projects\ANRWatchDog\ANRWatchDog\obj\Debug\ANRWatchDog.pdb
+c:\users\nathan.westfall\documents\visual studio 2017\Projects\ANRWatchDog\ANRWatchDog\obj\Debug\android\bin\ANRWatchDog.ANRWatchDog.apk
+c:\users\nathan.westfall\documents\visual studio 2017\Projects\ANRWatchDog\ANRWatchDog\obj\Debug\R.cs.flag
+c:\users\nathan.westfall\documents\visual studio 2017\Projects\ANRWatchDog\ANRWatchDog\obj\Debug\uploadflags.txt
