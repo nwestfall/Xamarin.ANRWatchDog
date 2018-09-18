@@ -2,3 +2,7 @@
 bin/*
 obj/*
 nuget.exe
+*.props
+*.cache
+*.stamp
+*.flag
