@@ -20,7 +20,15 @@ namespace Xamarin.ANRWatchDog
         [Serializable]
         private class _ThreadTrace
         {
+			/// <summary>
+			/// Gets the name.
+			/// </summary>
+			/// <value>The name.</value>
             public static string Name { get; private set; }
+			/// <summary>
+			/// Gets the stack trace.
+			/// </summary>
+			/// <value>The stack trace.</value>
             public static StackTraceElement[] StackTrace { get; private set; }
 
             internal class _Thread : Throwable
@@ -45,12 +53,22 @@ namespace Xamarin.ANRWatchDog
 
         private ANRError(_ThreadTrace._Thread st) : base("Application Not Responding", st) { }
 
+		/// <summary>
+		/// Fills the in stack trace.
+		/// </summary>
+		/// <returns>The in stack trace.</returns>
         public override Throwable FillInStackTrace()
         {
             SetStackTrace(new StackTraceElement[] { });
             return this;
         }
 
+		/// <summary>
+		/// New the specified prefix and logThreadsWithoutStackTrace.
+		/// </summary>
+		/// <returns>The new.</returns>
+		/// <param name="prefix">Prefix.</param>
+		/// <param name="logThreadsWithoutStackTrace">If set to <c>true</c> log threads without stack trace.</param>
         public static ANRError New(string prefix, bool logThreadsWithoutStackTrace)
         {
             var mainThread = Looper.MainLooper.Thread;
@@ -61,7 +79,7 @@ namespace Xamarin.ANRWatchDog
 
             foreach(var entry in Thread.AllStackTraces)
             {
-                if (entry.Key == mainThread || (entry.Key.Name.StartsWith(prefix) && (logThreadsWithoutStackTrace || entry.Value.Length > 0)))
+                if (entry.Key == mainThread || (entry.Key.Name.StartsWith(prefix, StringComparison.Ordinal) && (logThreadsWithoutStackTrace || entry.Value.Length > 0)))
                     stackTraces.Add(entry.Key, entry.Value);
             }
 
@@ -79,6 +97,10 @@ namespace Xamarin.ANRWatchDog
             return new ANRError(tst);
         }
 
+		/// <summary>
+		/// News the main only.
+		/// </summary>
+		/// <returns>The main only.</returns>
         public static ANRError NewMainOnly()
         {
             var mainThread = Looper.MainLooper.Thread;
@@ -96,8 +118,18 @@ namespace Xamarin.ANRWatchDog
         {
             private readonly Thread _mainThread;
 
+			/// <summary>
+			/// Initializes a new instance of the <see cref="T:Xamarin.ANRWatchDog.ANRError._StackTraceComparer"/> class.
+			/// </summary>
+			/// <param name="mainThread">Main thread.</param>
             public _StackTraceComparer(Thread mainThread) => _mainThread = mainThread;
 
+			/// <summary>
+			/// Equals the specified lhs and rhs.
+			/// </summary>
+			/// <returns>The equals.</returns>
+			/// <param name="lhs">Lhs.</param>
+			/// <param name="rhs">Rhs.</param>
             public bool Equals(Thread lhs, Thread rhs)
             {
                 if (lhs == rhs)
@@ -109,6 +141,11 @@ namespace Xamarin.ANRWatchDog
                 return rhs.Name.Equals(lhs.Name);
             }
 
+			/// <summary>
+			/// Gets the hash code.
+			/// </summary>
+			/// <returns>The hash code.</returns>
+			/// <param name="obj">Object.</param>
             public int GetHashCode(Thread obj)
             {
                 return obj.GetHashCode();

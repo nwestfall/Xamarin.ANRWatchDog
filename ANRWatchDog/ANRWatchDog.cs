@@ -10,11 +10,17 @@ namespace Xamarin.ANRWatchDog
     /// </summary>
     public class ANRWatchDog : Thread, IRunnable
     {
+		/// <summary>
+		/// ANR Listener.
+		/// </summary>
         public interface IANRListener
         {
             void OnAppNotResponding(ANRError error);
         }
 
+		/// <summary>
+		/// Interruption listener.
+		/// </summary>
         public interface IInterruptionListener
         {
             void OnInterrupted(InterruptedException e);
@@ -41,6 +47,7 @@ namespace Xamarin.ANRWatchDog
         private string _namePrefix = "";
         private bool _logThreadsWithoutStackTrace = false;
         private bool _ignoreDebugger = false;
+		private bool _isDisposed = false;
 
         private static volatile int _tick = 0;
 
@@ -62,7 +69,7 @@ namespace Xamarin.ANRWatchDog
         /// <returns>itself for chaining</returns>
         public ANRWatchDog SetANRListener(IANRListener listener)
         {
-            _anrListener = (listener == null) ? new DefaultANRListener() : listener;
+            _anrListener = listener ?? new DefaultANRListener();
             return this;
         }
 
@@ -74,7 +81,7 @@ namespace Xamarin.ANRWatchDog
         /// <returns>itself for chaining</returns>
         public ANRWatchDog SetInterruptionListener(IInterruptionListener listener)
         {
-            _interruptionListener = (listener == null) ? new DefaultInterruptionListener() : listener;
+			_interruptionListener = listener ?? new DefaultInterruptionListener();
             return this;
         }
 
@@ -87,7 +94,7 @@ namespace Xamarin.ANRWatchDog
         /// <returns>itself for chaining</returns>
         public ANRWatchDog SetReportThreadNamePrefix(string prefix)
         {
-            _namePrefix = (prefix == null) ? string.Empty : prefix;
+            _namePrefix = prefix ?? string.Empty;
             return this;
         }
 
@@ -128,44 +135,63 @@ namespace Xamarin.ANRWatchDog
             return this;
         }
 
+		/// <summary>
+		/// Run this instance.
+		/// </summary>
         public override void Run()
         {
             Name = "|ANR-WatchDog|";
 
             int lastTick, lastIgnored = -1;
-            while(!IsInterrupted)
-            {
-                lastTick = _tick;
-                _uiHandler.Post(() =>
-                {
-                    _tick = (_tick + 1) % Integer.MaxValue;
-                });
-                try
-                {
-                    Thread.Sleep(_timeoutInterval);
-                }
-                catch(InterruptedException e)
-                {
-                    _interruptionListener.OnInterrupted(e);
-                }
+			while (!_isDisposed && IsAlive && !IsInterrupted)
+			{
+				lastTick = _tick;
+				_uiHandler.Post(() =>
+				{
+					_tick = (_tick + 1) % Integer.MaxValue;
+				});
+				try
+				{
+					Sleep(_timeoutInterval);
+				}
+				catch (InterruptedException e)
+				{
+					_interruptionListener?.OnInterrupted(e);
+				}
 
-                //If the main thread has not handled _ticker, it is blocked. ANR
-                if(_tick == lastTick)
-                {
-                    if(!_ignoreDebugger && Debug.IsDebuggerConnected)
-                    {
-                        if (_tick != lastIgnored)
-                            Log.Warn("ANRWatchdog", "An ANR was detected but ignored because the debugger is connected (you can prevent this with setIgnoreDebugger(true))");
-                        lastIgnored = _tick;
-                        continue;
-                    }
+				//If the main thread has not handled _ticker, it is blocked. ANR
+				if (_tick == lastTick)
+				{
+					if (!_ignoreDebugger && Debug.IsDebuggerConnected)
+					{
+						if (_tick != lastIgnored)
+							Log.Warn("ANRWatchdog", "An ANR was detected but ignored because the debugger is connected (you can prevent this with setIgnoreDebugger(true))");
+						lastIgnored = _tick;
+						continue;
+					}
 
-                    ANRError error = (_namePrefix != null) ? ANRError.New(_namePrefix, _logThreadsWithoutStackTrace) : ANRError.NewMainOnly();
-                    _anrListener.OnAppNotResponding(error);
-                    return;
-
-                }
-            }
+					ANRError error = (_namePrefix != null) ? ANRError.New(_namePrefix, _logThreadsWithoutStackTrace) : ANRError.NewMainOnly();
+					_anrListener?.OnAppNotResponding(error);
+					return;
+				}
+			}
         }
-    }
+
+		/// <summary>
+		/// Dispose the specified disposing.
+		/// </summary>
+		/// <param name="disposing">If set to <c>true</c> disposing.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if(!_isDisposed && disposing)
+			{
+				_isDisposed = true;
+
+				_anrListener = null;
+				_interruptionListener = null;
+			}
+
+			base.Dispose(disposing);
+		}
+	}
 }
