@@ -50,14 +50,20 @@ namespace Xamarin.ANRWatchDog
         }
 
         private const long SERIAL_VERSION_UID = 1L;
+        
+		public readonly long Duration;
 
-        private ANRError(_ThreadTrace._Thread st) : base("Application Not Responding", st) { }
+        private ANRError(_ThreadTrace._Thread st, long duration) : 
+        	base("Application Not Responding", st)
+		{
+			Duration = duration;
+		}
 
 		/// <summary>
 		/// Fills the in stack trace.
 		/// </summary>
 		/// <returns>The in stack trace.</returns>
-        public override Throwable FillInStackTrace()
+		public override Throwable FillInStackTrace()
         {
             SetStackTrace(new StackTraceElement[] { });
             return this;
@@ -69,7 +75,7 @@ namespace Xamarin.ANRWatchDog
 		/// <returns>The new.</returns>
 		/// <param name="prefix">Prefix.</param>
 		/// <param name="logThreadsWithoutStackTrace">If set to <c>true</c> log threads without stack trace.</param>
-        public static ANRError New(string prefix, bool logThreadsWithoutStackTrace)
+        public static ANRError New(long duration, string prefix, bool logThreadsWithoutStackTrace)
         {
             var mainThread = Looper.MainLooper.Thread;
 
@@ -94,14 +100,14 @@ namespace Xamarin.ANRWatchDog
                 tst = new _ThreadTrace._Thread(tst);
             }
 
-            return new ANRError(tst);
+            return new ANRError(tst, duration);
         }
 
 		/// <summary>
 		/// News the main only.
 		/// </summary>
 		/// <returns>The main only.</returns>
-        public static ANRError NewMainOnly()
+        public static ANRError NewMainOnly(long duration)
         {
             var mainThread = Looper.MainLooper.Thread;
             var mainStackTrace = mainThread.GetStackTrace();
@@ -109,7 +115,7 @@ namespace Xamarin.ANRWatchDog
             var tt = new _ThreadTrace(GetThreadTitle(mainThread), mainStackTrace);
             var tst = new _ThreadTrace._Thread(null);
 
-            return new ANRError(tst);
+            return new ANRError(tst, duration);
         }
 
         private static string GetThreadTitle(Thread thread) => $"{thread.Name} (state = {thread.GetState()})";
