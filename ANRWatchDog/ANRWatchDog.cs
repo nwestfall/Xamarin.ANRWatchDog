@@ -162,7 +162,10 @@ namespace Xamarin.ANRWatchDog
 				//If the main thread has not handled _ticker, it is blocked. ANR
 				if (_tick == lastTick)
 				{
-					if (!_ignoreDebugger && Debug.IsDebuggerConnected)
+					if (!_ignoreDebugger && 
+						(Debug.IsDebuggerConnected || Debug.WaitingForDebugger()) // Android Debug
+						||
+						(System.Diagnostics.Debugger.IsAttached)) // c# debug
 					{
 						if (_tick != lastIgnored)
 							Log.Warn("ANRWatchdog", "An ANR was detected but ignored because the debugger is connected (you can prevent this with setIgnoreDebugger(true))");
