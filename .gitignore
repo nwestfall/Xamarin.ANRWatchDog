@@ -6,3 +6,7 @@ nuget.exe
 *.cache
 *.stamp
 *.flag
+ANRTestApp/bin/*
+ANRTestApp/bin/Debug/*
+ANRTestApp/obj/*
+packages/*
