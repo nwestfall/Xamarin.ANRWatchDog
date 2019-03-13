@@ -191,7 +191,7 @@ namespace Xamarin.ANRWatchDog
 			while (!_isDisposed && IsAlive && !IsInterrupted)
 			{
 				bool needPost = Interlocked.Read(ref _tick) == 0;
-				Interlocked.Increment(ref _tick);
+				Interlocked.Exchange(ref _tick, _tick + interval);
 				if (needPost)
 				{
 					_uiHandler.Post(() =>

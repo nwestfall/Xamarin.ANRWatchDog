@@ -1,24 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Runtime.Serialization;
+using System.Security;
 using Android.OS;
 
 using Java.Lang;
 
 namespace Xamarin.ANRWatchDog
 {
-    /// <summary>
-    /// Error thrown by <see cref="ANRWatchDog"/> when an ANR is detected.
-    /// Contains the stack trace of the frozen UI thread.
-    /// 
-    /// It is important to notice that, in an ANRError, all the "Caused by" are not really the cause
-    /// of the exception.  Each "Caused by" is the stack trace of the running thread.  Note that the main
-    /// thread always comes first.
-    /// </summary>
-    public class ANRError : Error
+	/// <summary>
+	/// Error thrown by <see cref="ANRWatchDog"/> when an ANR is detected.
+	/// Contains the stack trace of the frozen UI thread.
+	/// 
+	/// It is important to notice that, in an ANRError, all the "Caused by" are not really the cause
+	/// of the exception.  Each "Caused by" is the stack trace of the running thread.  Note that the main
+	/// thread always comes first.
+	/// </summary>
+	[Serializable]
+	public class ANRError : Error, ISerializable
     {
-        [Serializable]
-        private class _ThreadTrace
+		[Serializable]
+        private class _ThreadTrace : ISerializable
         {
 			/// <summary>
 			/// Gets the name.
@@ -31,29 +33,69 @@ namespace Xamarin.ANRWatchDog
 			/// <value>The stack trace.</value>
             public static StackTraceElement[] StackTrace { get; private set; }
 
-            internal class _Thread : Throwable
+			[Serializable]
+            internal class _Thread : Throwable, ISerializable
             {
-                internal _Thread(_Thread other) : base(Name, other) { }
+				[SecuritySafeCritical]
+				protected _Thread(SerializationInfo info, StreamingContext context)
+					: base(info.GetString("Name"))
+				{
+				}
+
+				internal _Thread(_Thread other) : base(Name, other) { }
 
                 public override Throwable FillInStackTrace()
                 {
                     SetStackTrace(_ThreadTrace.StackTrace);
                     return this;
                 }
-            }
 
-            internal _ThreadTrace(string name, StackTraceElement[] stackTrace)
+				public override void GetObjectData(SerializationInfo info, StreamingContext context)
+				{
+					base.GetObjectData(info, context);
+
+					info.AddValue("Name", Name);
+				}
+			}
+
+			[SecuritySafeCritical]
+			protected _ThreadTrace(SerializationInfo info, StreamingContext context)
+			{
+				Name = info.GetString("Name");
+				StackTrace = (StackTraceElement[])info.GetValue("StackTrace", typeof(StackTraceElement[]));
+			}
+
+			internal _ThreadTrace(string name, StackTraceElement[] stackTrace)
             {
                 Name = name;
                 StackTrace = stackTrace;
             }
-        }
 
-        private const long SERIAL_VERSION_UID = 1L;
+			public void GetObjectData(SerializationInfo info, StreamingContext context)
+			{
+				info.AddValue("Name", Name);
+				info.AddValue("StackTrace", StackTrace);
+			}
+		}
+
+		private const long SERIAL_VERSION_UID = 1L;
         
 		public readonly long Duration;
 
-        private ANRError(_ThreadTrace._Thread st, long duration) : 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:Xamarin.ANRWatchDog.ANRError"/> class.
+		/// Used for Serialization
+		/// </summary>
+		/// <param name="info">Info.</param>
+		/// <param name="context">Context.</param>
+		[SecuritySafeCritical]
+		protected ANRError(SerializationInfo info, StreamingContext context)
+		{
+			Duration = info.GetInt64("Duration");
+			base.InitCause((Throwable)info.GetValue("Cause", typeof(Throwable)));
+		}
+
+		private ANRError(_ThreadTrace._Thread st, long duration) : 
         	base("Application Not Responding", st)
 		{
 			Duration = duration;
@@ -118,7 +160,15 @@ namespace Xamarin.ANRWatchDog
             return new ANRError(tst, duration);
         }
 
-        private static string GetThreadTitle(Thread thread) => $"{thread.Name} (state = {thread.GetState()})";
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData(info, context);
+
+			info.AddValue("Duration", Duration);
+			info.AddValue("Cause", Cause);
+		}
+
+		private static string GetThreadTitle(Thread thread) => $"{thread.Name} (state = {thread.GetState()})";
 
         private class _StackTraceComparer : IEqualityComparer<Thread>
         {

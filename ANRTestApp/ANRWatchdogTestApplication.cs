@@ -1,6 +1,9 @@
 ﻿using System;
-
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using Android.App;
+using Android.Runtime;
 using Android.Util;
 
 using Xamarin.ANRWatchDog;
@@ -17,7 +20,7 @@ namespace ANRTestApp
 		class SilentListener : ANRWatchDog.IANRListener
 		{
 			public void OnAppNotResponding(ANRError error) =>
-				Log.Error("ANR-Watchdog-Demo", "", error);
+				Log.Error("ANR-Watchdog-Demo", error, "ANR");
 		}
 
 		class DefaultListener : ANRWatchDog.IANRListener
@@ -25,6 +28,28 @@ namespace ANRTestApp
 			public void OnAppNotResponding(ANRError error)
 			{
 				Log.Error("ANR-Watchdog-Demo", "Detected Application Not Responding!");
+
+				// Test serialization
+				try
+				{
+					IFormatter serializeFormatter = new BinaryFormatter();
+					using (var stream = new MemoryStream())
+					{
+						// Serialize
+						serializeFormatter.Serialize(stream, error);
+
+						// Deserialize
+						IFormatter deserializeFormatter = new BinaryFormatter();
+						stream.Position = 0;
+						var deserializedError = (ANRError)deserializeFormatter.Deserialize(stream);
+						Log.Error("ANR-Watchdog-Demo", error, "Original ANR");
+						Log.Error("ANR-Watchdog-Demo", deserializedError, "Deserialized ANR");
+					}
+				}
+				catch(Exception ex)
+				{
+					throw ex;
+				}
 
 				Log.Info("ANR-Watchdog-Demo", "Error was successfully serialized");
 
@@ -36,7 +61,7 @@ namespace ANRTestApp
 		{
 			public long Intercept(long duration)
 			{
-				long ret = ANRWatchdogTestApplication.duration * 1000 - duration;
+				long ret = (ANRWatchdogTestApplication.duration * 1000) - duration;
 				if (ret > 0)
 					Log.Warn("ANR-Watchdog-Demo", $"Intercepted ANR that is too short ({duration} ms), postponing for {ret} ms.");
 				return ret;
@@ -48,6 +73,9 @@ namespace ANRTestApp
 		internal static int duration = 4;
 
 		internal readonly ANRWatchDog.IANRListener _silentListener = new SilentListener();
+
+		public ANRWatchdogTestApplication(IntPtr intPtr, JniHandleOwnership jniHandleOwnership)
+			: base(intPtr, jniHandleOwnership) {  }
 
 		public override void OnCreate()
 		{
