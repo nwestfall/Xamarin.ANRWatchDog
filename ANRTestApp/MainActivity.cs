@@ -76,7 +76,7 @@ namespace ANRTestApp
 			minAnrDurationButton.Text = $"{ANRWatchdogTestApplication.duration} seconds";
 			minAnrDurationButton.Click += (sender, e) =>
 			{
-				ANRWatchdogTestApplication.duration = ANRWatchdogTestApplication.duration % 5 + 2;
+				ANRWatchdogTestApplication.duration = (ANRWatchdogTestApplication.duration % 5) + 2;
 				minAnrDurationButton.Text = $"{ANRWatchdogTestApplication.duration} seconds";
 			};
 
@@ -136,4 +136,3 @@ namespace ANRTestApp
 		}
 	}
 }
-
