@@ -131,7 +131,7 @@ Configuration
 
 ### Debugger
 
-* By default, the watchdog will ignore ANRs if the debugger is attached. This is because it detects execution pauses and breakpoints as ANRs.
+* By default, the watchdog will ignore ANRs if the debugger is attached or if the app is waiting for the debugger to attach. This is because it detects execution pauses and breakpoints as ANRs.
 To disable this and throw an `ANRError` even if the debugger is connected, you can add `setIgnoreDebugger(true)`:
 
     ```C#
@@ -156,7 +156,8 @@ To disable this and throw an `ANRError` even if the debugger is connected, you c
     new ANRWatchDog().SetANRListener(new MyANRListener()).Start();
     ```
 
-    **This is very important when delivering your app in production.** When in the hand of the final user, it's *probably better* not to crash after 5 seconds, but simply report the ANR to whatever reporting system you use. Maybe, after some more seconds, the app will "de-freeze".
+    **This is very important when delivering your app in production.** 
+    * When in the hand of the final user, it's *probably better* not to crash after 5 seconds, but simply report the ANR to whatever reporting system you use. Maybe, after some more seconds, the app will "de-freeze".
 
 ### Filtering reports
 
@@ -177,12 +178,37 @@ To disable this and throw an `ANRError` even if the debugger is connected, you c
     }
     ```
 
-* If you want to have only the main thread stack trace and not all the other threads (like in version 1.0), you can:
+* If you want to have only the main thread stack trace and not all the other threads, you can:
 
     ```C#
     new ANRWatchDog().SetReportMainThreadOnly().Start();
     ```
 
+### ANR Interceptor
+* Sometimes, you want to know that the application has froze for a certain duration, but not report the ANR error just yet.
+
+* You can define an interceptor that will be called before reporting an error.
+
+* The role of the interceptor that will be called before reporting an error.
+
+* The role of the interceptor is to define whether or not, given the given freeze duration, an ANR error should be raised or postponed.
+
+```c#
+public class MyANRInterceptor : IANRInterceptor
+{
+  public long Intercept(long duration)
+  {
+    long ret = 5000 - duration;
+    if(ret > 0)
+    {
+      Log.Warn(TAG, $"Intercepted ANR that is too short ({duration} ms), postponing for {ret} ms");
+    }
+    return ret;
+  }
+}
+
+new ANRWatchDog(2000).SetANRInterceptor(new MyANRInterceptor).Start();
+```
 
 ### Watchdog thread
 
