@@ -214,10 +214,10 @@ namespace Xamarin.ANRWatchDog
 				if(Interlocked.Read(ref _tick) != 0 && !_reported)
 				{
 					//noinspection ConstantConditions
-					if ((!_ignoreDebugger &&
-						(Debug.IsDebuggerConnected || Debug.WaitingForDebugger())) // Android Debug
+					if (!_ignoreDebugger && (
+						(Debug.IsDebuggerConnected || Debug.WaitingForDebugger()) // Android Debug
 						||
-						System.Diagnostics.Debugger.IsAttached) // c# debug
+						System.Diagnostics.Debugger.IsAttached)) // c# debug
 					{
 						Log.Warn("ANRWatchdog", "An ANR was detected but ignored because the debugger is connected (you can prevent this with setIgnoreDebugger(true))");
 						_reported = true;
