@@ -35,15 +35,17 @@ namespace ANRTestApp
 					IFormatter serializeFormatter = new BinaryFormatter();
 					using (var stream = new MemoryStream())
 					{
-						// Serialize
-						serializeFormatter.Serialize(stream, error);
+                        // Serialize
+#pragma warning disable SYSLIB0011 // Type or member is obsolete
+                        serializeFormatter.Serialize(stream, error);
 
-						// Deserialize
-						IFormatter deserializeFormatter = new BinaryFormatter();
+                        // Deserialize
+                        IFormatter deserializeFormatter = new BinaryFormatter();
 						stream.Position = 0;
 						var deserializedError = (ANRError)deserializeFormatter.Deserialize(stream);
 						Log.Error("ANR-Watchdog-Demo", error, "Original ANR");
 						Log.Error("ANR-Watchdog-Demo", deserializedError, "Deserialized ANR");
+#pragma warning restore SYSLIB0011 // Type or member is obsolete
 					}
 				}
 				catch(Exception ex)
