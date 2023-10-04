@@ -10,3 +10,5 @@ ANRTestApp/bin/*
 ANRTestApp/bin/Debug/*
 ANRTestApp/obj/*
 packages/*
+/ANRWatchDog/bin
+/ANRWatchDog/obj

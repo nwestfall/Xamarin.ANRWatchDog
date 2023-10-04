@@ -53,12 +53,14 @@ namespace ANRTestApp
 		{
 			new LockerThread().Start();
 
-			new Handler().PostDelayed(() =>
+#pragma warning disable CA1422 // Validate platform compatibility
+            new Handler().PostDelayed(() =>
 			{
 				lock (_mutex)
 					Log.Error("ANR-Failed", "There should be a dead lock before this message");
 			}, 1000);
-		}
+#pragma warning restore CA1422 // Validate platform compatibility
+        }
 
 		int mode = 0;
 		bool crash = true;
