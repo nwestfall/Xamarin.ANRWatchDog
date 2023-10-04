@@ -1,6 +1,6 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/nwestfall/xamarin.anrwatchdog/badge)](https://www.codefactor.io/repository/github/nwestfall/xamarin.anrwatchdog)
 [![Build status](https://ci.appveyor.com/api/projects/status/na0iqlm9j0vt3ps3?svg=true)](https://ci.appveyor.com/project/nwestfall/xamarin-anrwatchdog)
-[![NuGet version](https://badge.fury.io/nu/Xamarin.ANRWatchDog.svg)](https://badge.fury.io/nu/Xamarin.ANRWatchDog)
+[![NuGet version](https://badge.fury.io/nu/Xamarin.ANRWatchDog.netcore.svg)](https://badge.fury.io/nu/Xamarin.ANRWatchDog.netcore)
 
 # Xamarin.ANRWatchDog
 Xamarin port of [https://github.com/SalomonBrys/ANR-WatchDog](https://github.com/SalomonBrys/ANR-WatchDog)
